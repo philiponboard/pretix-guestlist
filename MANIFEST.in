@@ -1,0 +1,4 @@
+include LICENSE
+recursive-include pretix_guestlist/static *
+recursive-include pretix_guestlist/templates *
+recursive-include pretix_guestlist/locale *

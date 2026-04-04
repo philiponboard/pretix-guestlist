@@ -1,0 +1,18 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ event.settings.locale|default:'de' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ event.name }}</title>
+    <link rel="stylesheet" href="{% static 'pretix_guestlist/css/guestlist.css' %}">
+</head>
+<body>
+<main class="gl-wrap">
+    <div class="gl-card gl-result">
+        <div class="gl-result-title">{% trans "Already registered" %}</div>
+        <p class="gl-result-text">{% trans "You have already completed your registration. Check your e-mail for your ticket." %}</p>
+    </div>
+</main>
+</body>
+</html>

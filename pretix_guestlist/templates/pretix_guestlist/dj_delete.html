@@ -1,0 +1,17 @@
+{% extends "pretixcontrol/event/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete DJ" %}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Delete DJ" %}</h1>
+
+<p>{% blocktrans with name=object.name %}Are you sure you want to delete the DJ "{{ name }}"? This will also remove all associated guest registrations.{% endblocktrans %}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <a href="{% url 'plugins:pretix_guestlist:index' organizer=request.event.organizer.slug event=request.event.slug %}"
+       class="btn btn-default">{% trans "Cancel" %}</a>
+    <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+</form>
+{% endblock %}

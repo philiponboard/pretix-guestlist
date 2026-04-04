@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+.tox/
+.venv/
+env/
+
+# Compiled translations
+*.mo
+*.pot
+
+# Dev documentation (local only)
+CLAUDE.md
+STARTER-PROMPT.md
+PHASE*.md
+TICKET-LIMIT-FIX-PROMPT.md
+task_plan.md
+progress.md
+findings.md
+
+# Claude/AI config
+.claude/
+
+# Docker dev setup (local development only)
+docker-dev-setup/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Editor swap files
+*.swp
+*.swo
+*~

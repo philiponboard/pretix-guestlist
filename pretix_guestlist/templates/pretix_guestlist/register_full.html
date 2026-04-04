@@ -1,0 +1,21 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ event.settings.locale|default:'de' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ event.name }}</title>
+    <link rel="stylesheet" href="{% static 'pretix_guestlist/css/guestlist.css' %}">
+</head>
+<body>
+<main class="gl-wrap">
+    <div class="gl-card gl-result">
+        <div class="gl-result-title">{% trans "Guest list full" %}</div>
+        <p class="gl-result-text">
+            {% blocktrans with dj=dj.name %}All spots on the guest list of {{ dj }} are taken.{% endblocktrans %}
+        </p>
+        <p class="gl-result-text" style="margin-top: 24px; font-size: 13px;">{{ event.name }}</p>
+    </div>
+</main>
+</body>
+</html>

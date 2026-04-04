@@ -1,0 +1,430 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-03 17:12+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+msgid "Guest List"
+msgstr ""
+
+msgid ""
+"Smart guest list management for DJs and artists. Assign individual guest "
+"list quotas and let guests self-register."
+msgstr ""
+
+msgid "Guest List (CSV)"
+msgstr ""
+
+msgid "DJ"
+msgstr ""
+
+msgid "First name"
+msgstr ""
+
+msgid "Last name"
+msgstr ""
+
+msgid "E-Mail"
+msgstr ""
+
+msgid "Ticket type"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Registered"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+msgid "Voucher code"
+msgstr ""
+
+msgid "Full Price Product"
+msgstr ""
+
+msgid "Half Price Product"
+msgstr ""
+
+msgid "Free Product"
+msgstr ""
+
+msgid "guest@example.com"
+msgstr ""
+
+msgid "Hide products from shop"
+msgstr ""
+
+msgid ""
+"Automatically hide guest list products from the normal shop. Guests can only "
+"access them via their personal link."
+msgstr ""
+
+msgid "Send reminder emails"
+msgstr ""
+
+msgid ""
+"Automatically send reminder emails to guests who have not registered yet (7 "
+"days and 2 days before the event)."
+msgstr ""
+
+#, python-brace-format
+msgid "Your guest list for {event_name}"
+msgstr ""
+
+msgid "E-Mail subject"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Hello {dj_name},\n"
+"\n"
+"you have {quota} half-price guest list spots for {event_name}.\n"
+"\n"
+"Share this link with your guests:\n"
+"{link}\n"
+"\n"
+"Your guests can register themselves and will receive their ticket via e-"
+"mail.\n"
+"\n"
+"Best regards,\n"
+"The {event_name} Team"
+msgstr ""
+
+msgid "E-Mail template"
+msgstr ""
+
+msgid "Registration page text"
+msgstr ""
+
+msgid "Guest list settings"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Half-Price Quota"
+msgstr ""
+
+msgid "Free Quota"
+msgstr ""
+
+msgid "Token"
+msgstr ""
+
+msgid "Invitation sent"
+msgstr ""
+
+msgid "Invitation sent at"
+msgstr ""
+
+msgid "Notes"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "DJs"
+msgstr ""
+
+msgid "Full Price"
+msgstr ""
+
+msgid "Half Price"
+msgstr ""
+
+msgid "Free"
+msgstr ""
+
+msgid "Invited"
+msgstr ""
+
+msgid "Checked in"
+msgstr ""
+
+msgid "Guest token"
+msgstr ""
+
+msgid "Voucher"
+msgstr ""
+
+msgid "Reminders sent"
+msgstr ""
+
+msgid "Registered at"
+msgstr ""
+
+msgid "Guest"
+msgstr ""
+
+msgid "Guests"
+msgstr ""
+
+msgid "Guest list voucher for {}"
+msgstr ""
+
+msgid "Half-price quota exhausted."
+msgstr ""
+
+msgid "Free ticket quota exhausted."
+msgstr ""
+
+msgid "No product configured for this ticket type."
+msgstr ""
+
+msgid "Scan this QR code to open your guest list dashboard."
+msgstr ""
+
+#, python-brace-format
+msgid "You are on the guest list for {event_name}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Hello,\n"
+"\n"
+"{dj_name} has put you on the guest list for {event_name}.\n"
+"Ticket type: {ticket_type}\n"
+"\n"
+"Please complete your registration here:\n"
+"{link}\n"
+"\n"
+"Best regards,\n"
+"The {event_name} Team"
+msgstr ""
+
+#, python-brace-format
+msgid "Reminder: You are on the guest list for {event_name}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Hello,\n"
+"\n"
+"This is a friendly reminder that {dj_name} has put you on the guest list for "
+"{event_name}, but you have not yet completed your registration.\n"
+"\n"
+"Ticket type: {ticket_type}\n"
+"\n"
+"Please complete your registration here:\n"
+"{link}\n"
+"\n"
+"Best regards,\n"
+"The {event_name} Team"
+msgstr ""
+
+msgid "Already registered"
+msgstr ""
+
+msgid ""
+"You have already completed your registration. Check your e-mail for your "
+"ticket."
+msgstr ""
+
+#, python-format
+msgid "Half Price: %(used)s/%(total)s used"
+msgstr ""
+
+#, python-format
+msgid "Free: %(used)s/%(total)s used"
+msgstr ""
+
+msgid "Ticket"
+msgstr ""
+
+msgid "Full"
+msgstr ""
+
+msgid "Half"
+msgstr ""
+
+msgid "Resend invitation"
+msgstr ""
+
+msgid "Resend"
+msgstr ""
+
+msgid "No guests yet."
+msgstr ""
+
+msgid "Invite guest"
+msgstr ""
+
+msgid "Invite"
+msgstr ""
+
+msgid "Delete DJ"
+msgstr ""
+
+#, python-format
+msgid ""
+"Are you sure you want to delete the DJ \"%(name)s\"? This will also remove "
+"all associated guest registrations."
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Invitation was already sent. Send again?"
+msgstr ""
+
+msgid "Send invitation to this DJ?"
+msgstr ""
+
+msgid "Send invitation"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "used"
+msgstr ""
+
+msgid "Invitation"
+msgstr ""
+
+msgid "Sent"
+msgstr ""
+
+msgid "Not sent"
+msgstr ""
+
+msgid "No guests registered yet."
+msgstr ""
+
+msgid "Edit DJ"
+msgstr ""
+
+msgid "Add DJ"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Send invitations to all DJs who have not been invited yet?"
+msgstr ""
+
+msgid "Send all invitations"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Half-Price"
+msgstr ""
+
+msgid "No DJs have been added yet."
+msgstr ""
+
+msgid "Registration"
+msgstr ""
+
+msgid "Guest Registration"
+msgstr ""
+
+msgid "Guest list of"
+msgstr ""
+
+#, python-format
+msgid ""
+"Ticket price: %(price)s EUR. You will be redirected to checkout after "
+"registration."
+msgstr ""
+
+msgid ""
+"This is a free ticket. You will receive your ticket by e-mail after "
+"registration."
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "Register & proceed to checkout"
+msgstr ""
+
+#, python-format
+msgid "%(used)s/%(total)s spots taken · %(free)s free"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Paid"
+msgstr ""
+
+msgid "Add guest"
+msgstr ""
+
+msgid "They will receive an invitation by e-mail."
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Register as guest"
+msgstr ""
+
+msgid "All spots are taken."
+msgstr ""
+
+msgid "Guest list full"
+msgstr ""
+
+#, python-format
+msgid "All spots on the guest list of %(dj)s are taken."
+msgstr ""
+
+msgid "Registration successful"
+msgstr ""
+
+#, python-format
+msgid "%(name)s, you are on the guest list of %(dj)s."
+msgstr ""
+
+#, python-format
+msgid "A confirmation with your ticket has been sent to %(email)s."
+msgstr ""
+
+msgid "Guest List Settings"
+msgstr ""
+
+msgid "Settings saved."
+msgstr ""
+
+msgid "DJ created."
+msgstr ""
+
+msgid "DJ updated."
+msgstr ""
+
+msgid "DJ deleted."
+msgstr ""
+
+#, python-brace-format
+msgid "Invitation sent to {name}."
+msgstr ""
+
+#, python-brace-format
+msgid "Invitations sent to {count} DJs."
+msgstr ""
+
+msgid "All invitations have already been sent."
+msgstr ""

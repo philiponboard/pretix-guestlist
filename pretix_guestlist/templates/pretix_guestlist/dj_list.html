@@ -1,0 +1,84 @@
+{% extends "pretixcontrol/event/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Guest List" %}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Guest List" %}</h1>
+
+<div class="btn-group pull-right">
+    <form method="post" action="{% url 'plugins:pretix_guestlist:send_all' organizer=request.event.organizer.slug event=request.event.slug %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-default" onclick="return confirm('{% trans "Send invitations to all DJs who have not been invited yet?" %}');">
+            <i class="fa fa-envelope"></i> {% trans "Send all invitations" %}
+        </button>
+    </form>
+    <a href="{% url 'plugins:pretix_guestlist:settings' organizer=request.event.organizer.slug event=request.event.slug %}"
+       class="btn btn-default">
+        <i class="fa fa-cog"></i> {% trans "Settings" %}
+    </a>
+    <a href="{% url 'plugins:pretix_guestlist:dj.create' organizer=request.event.organizer.slug event=request.event.slug %}"
+       class="btn btn-primary">
+        <i class="fa fa-plus"></i> {% trans "Add DJ" %}
+    </a>
+</div>
+
+<div class="clearfix"></div>
+
+{% if djs %}
+<p style="margin-top: 16px; color: #666; font-size: 13px;">
+    {{ djs|length }} {% trans "DJs" %}
+</p>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "E-Mail" %}</th>
+                <th>{% trans "Half-Price" %}</th>
+                <th>{% trans "Free" %}</th>
+                <th>{% trans "Guests" %}</th>
+                <th>{% trans "Invitation" %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dj in djs %}
+            <tr>
+                <td>
+                    <a href="{% url 'plugins:pretix_guestlist:dj.detail' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}">
+                        {{ dj.name }}
+                    </a>
+                </td>
+                <td>{{ dj.email }}</td>
+                <td>{{ dj.half_price_invited_count }}/{{ dj.half_price_quota }}</td>
+                <td>{{ dj.free_invited_count }}/{{ dj.free_quota }}</td>
+                <td>{{ dj.guests.count }}</td>
+                <td>
+                    {% if dj.invitation_sent %}
+                        <span style="color: #16a34a;">{% trans "Sent" %}</span>
+                    {% else %}
+                        <span style="color: #94a3b8;">{% trans "Not sent" %}</span>
+                    {% endif %}
+                </td>
+                <td class="text-right">
+                    <a href="{% url 'plugins:pretix_guestlist:dj.edit' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}"
+                       class="btn btn-xs btn-default" title="{% trans 'Edit' %}">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                    <a href="{% url 'plugins:pretix_guestlist:dj.delete' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}"
+                       class="btn btn-xs btn-danger" title="{% trans 'Delete' %}">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-collection" style="margin-top: 20px;">
+    <p>{% trans "No DJs have been added yet." %}</p>
+</div>
+{% endif %}
+{% endblock %}

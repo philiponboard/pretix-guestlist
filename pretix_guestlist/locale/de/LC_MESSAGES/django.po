@@ -1,0 +1,478 @@
+# German translations for pretix-guestlist plugin.
+# Copyright (C) 2026 Praerie Festival
+# This file is distributed under the same license as the pretix-guestlist package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pretix-guestlist 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-03 17:12+0200\n"
+"PO-Revision-Date: 2026-04-03 17:12+0200\n"
+"Last-Translator: Praerie Festival\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Guest List"
+msgstr "Gaesteliste"
+
+msgid ""
+"Smart guest list management for DJs and artists. Assign individual guest "
+"list quotas and let guests self-register."
+msgstr ""
+"Gaestelisten-Verwaltung fuer DJs und Kuenstler. Individuelle Kontingente "
+"zuweisen und Gaeste sich selbst registrieren lassen."
+
+msgid "Guest List (CSV)"
+msgstr "Gaesteliste (CSV)"
+
+msgid "DJ"
+msgstr "DJ"
+
+msgid "First name"
+msgstr "Vorname"
+
+msgid "Last name"
+msgstr "Nachname"
+
+msgid "E-Mail"
+msgstr "E-Mail"
+
+msgid "Ticket type"
+msgstr "Ticket-Typ"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Registered"
+msgstr "Registriert"
+
+msgid "Order"
+msgstr "Bestellung"
+
+msgid "Voucher code"
+msgstr "Gutscheincode"
+
+msgid "Full Price Product"
+msgstr "Vollpreis-Produkt"
+
+msgid "Half Price Product"
+msgstr "Halber-Preis-Produkt"
+
+msgid "Free Product"
+msgstr "Gratis-Produkt"
+
+msgid "guest@example.com"
+msgstr "gast@example.com"
+
+msgid "Hide products from shop"
+msgstr "Produkte im Shop verstecken"
+
+msgid ""
+"Automatically hide guest list products from the normal shop. Guests can only "
+"access them via their personal link."
+msgstr ""
+"Gaesteliste-Produkte automatisch im normalen Shop verstecken. Gaeste koennen "
+"sie nur ueber ihren persoenlichen Link erreichen."
+
+msgid "Send reminder emails"
+msgstr "Erinnerungsmails senden"
+
+msgid ""
+"Automatically send reminder emails to guests who have not registered yet (7 "
+"days and 2 days before the event)."
+msgstr ""
+"Automatisch Erinnerungsmails an Gaeste senden, die sich noch nicht "
+"registriert haben (7 Tage und 2 Tage vor dem Event)."
+
+#, python-brace-format
+msgid "Your guest list for {event_name}"
+msgstr "Deine Gaesteliste fuer {event_name}"
+
+msgid "E-Mail subject"
+msgstr "E-Mail-Betreff"
+
+#, python-brace-format
+msgid ""
+"Hello {dj_name},\n"
+"\n"
+"you have {quota} half-price guest list spots for {event_name}.\n"
+"\n"
+"Share this link with your guests:\n"
+"{link}\n"
+"\n"
+"Your guests can register themselves and will receive their ticket via e-"
+"mail.\n"
+"\n"
+"Best regards,\n"
+"The {event_name} Team"
+msgstr ""
+"Hallo {dj_name},\n"
+"\n"
+"du hast {quota} Half-Price-Plaetze auf der Gaesteliste fuer {event_name}.\n"
+"\n"
+"Teile diesen Link mit deinen Gaesten:\n"
+"{link}\n"
+"\n"
+"Deine Gaeste koennen sich selbst registrieren und erhalten ihr Ticket per "
+"E-Mail.\n"
+"\n"
+"Viele Gruesse,\n"
+"Das {event_name} Team"
+
+msgid "E-Mail template"
+msgstr "E-Mail-Vorlage"
+
+msgid "Registration page text"
+msgstr "Text auf der Registrierungsseite"
+
+msgid "Guest list settings"
+msgstr "Gaesteliste-Einstellungen"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Half-Price Quota"
+msgstr "Half-Price-Kontingent"
+
+msgid "Free Quota"
+msgstr "Free-Kontingent"
+
+msgid "Token"
+msgstr "Token"
+
+msgid "Invitation sent"
+msgstr "Einladung gesendet"
+
+msgid "Invitation sent at"
+msgstr "Einladung gesendet am"
+
+msgid "Notes"
+msgstr "Notizen"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "DJs"
+msgstr "DJs"
+
+msgid "Full Price"
+msgstr "Vollpreis"
+
+msgid "Half Price"
+msgstr "Halber Preis"
+
+msgid "Free"
+msgstr "Gratis"
+
+msgid "Invited"
+msgstr "Eingeladen"
+
+msgid "Checked in"
+msgstr "Eingecheckt"
+
+msgid "Guest token"
+msgstr "Gast-Token"
+
+msgid "Voucher"
+msgstr "Gutschein"
+
+msgid "Reminders sent"
+msgstr "Erinnerungen gesendet"
+
+msgid "Registered at"
+msgstr "Registriert am"
+
+msgid "Guest"
+msgstr "Gast"
+
+msgid "Guests"
+msgstr "Gaeste"
+
+msgid "Guest list voucher for {}"
+msgstr "Gaesteliste-Gutschein fuer {}"
+
+msgid "Half-price quota exhausted."
+msgstr "Half-Price-Kontingent erschoepft."
+
+msgid "Free ticket quota exhausted."
+msgstr "Free-Ticket-Kontingent erschoepft."
+
+msgid "No product configured for this ticket type."
+msgstr "Kein Produkt fuer diesen Ticket-Typ konfiguriert."
+
+msgid "Scan this QR code to open your guest list dashboard."
+msgstr "Scanne diesen QR-Code um dein Gaesteliste-Dashboard zu oeffnen."
+
+#, python-brace-format
+msgid "You are on the guest list for {event_name}"
+msgstr "Du stehst auf der Gaesteliste fuer {event_name}"
+
+#, python-brace-format
+msgid ""
+"Hello,\n"
+"\n"
+"{dj_name} has put you on the guest list for {event_name}.\n"
+"Ticket type: {ticket_type}\n"
+"\n"
+"Please complete your registration here:\n"
+"{link}\n"
+"\n"
+"Best regards,\n"
+"The {event_name} Team"
+msgstr ""
+"Hallo,\n"
+"\n"
+"{dj_name} hat dich auf die Gaesteliste fuer {event_name} gesetzt.\n"
+"Ticket-Typ: {ticket_type}\n"
+"\n"
+"Bitte schliesse deine Registrierung hier ab:\n"
+"{link}\n"
+"\n"
+"Viele Gruesse,\n"
+"Das {event_name} Team"
+
+#, python-brace-format
+msgid "Reminder: You are on the guest list for {event_name}"
+msgstr "Erinnerung: Du stehst auf der Gaesteliste fuer {event_name}"
+
+#, python-brace-format
+msgid ""
+"Hello,\n"
+"\n"
+"This is a friendly reminder that {dj_name} has put you on the guest list for "
+"{event_name}, but you have not yet completed your registration.\n"
+"\n"
+"Ticket type: {ticket_type}\n"
+"\n"
+"Please complete your registration here:\n"
+"{link}\n"
+"\n"
+"Best regards,\n"
+"The {event_name} Team"
+msgstr ""
+"Hallo,\n"
+"\n"
+"dies ist eine freundliche Erinnerung, dass {dj_name} dich auf die "
+"Gaesteliste fuer {event_name} gesetzt hat. Du hast deine Registrierung "
+"noch nicht abgeschlossen.\n"
+"\n"
+"Ticket-Typ: {ticket_type}\n"
+"\n"
+"Bitte schliesse deine Registrierung hier ab:\n"
+"{link}\n"
+"\n"
+"Viele Gruesse,\n"
+"Das {event_name} Team"
+
+msgid "Already registered"
+msgstr "Bereits registriert"
+
+msgid ""
+"You have already completed your registration. Check your e-mail for your "
+"ticket."
+msgstr ""
+"Du hast deine Registrierung bereits abgeschlossen. Pruefe deine E-Mail "
+"fuer dein Ticket."
+
+#, python-format
+msgid "Half Price: %(used)s/%(total)s used"
+msgstr "Half Price: %(used)s/%(total)s belegt"
+
+#, python-format
+msgid "Free: %(used)s/%(total)s used"
+msgstr "Free: %(used)s/%(total)s belegt"
+
+msgid "Ticket"
+msgstr "Ticket"
+
+msgid "Full"
+msgstr "Voll"
+
+msgid "Half"
+msgstr "Halb"
+
+msgid "Resend invitation"
+msgstr "Einladung erneut senden"
+
+msgid "Resend"
+msgstr "Erneut senden"
+
+msgid "No guests yet."
+msgstr "Noch keine Gaeste."
+
+msgid "Invite guest"
+msgstr "Gast einladen"
+
+msgid "Invite"
+msgstr "Einladen"
+
+msgid "Delete DJ"
+msgstr "DJ loeschen"
+
+#, python-format
+msgid ""
+"Are you sure you want to delete the DJ \"%(name)s\"? This will also remove "
+"all associated guest registrations."
+msgstr ""
+"Bist du sicher, dass du den DJ \"%(name)s\" loeschen moechtest? Alle "
+"zugehoerigen Gast-Registrierungen werden ebenfalls entfernt."
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Delete"
+msgstr "Loeschen"
+
+msgid "Invitation was already sent. Send again?"
+msgstr "Einladung wurde bereits gesendet. Erneut senden?"
+
+msgid "Send invitation to this DJ?"
+msgstr "Einladung an diesen DJ senden?"
+
+msgid "Send invitation"
+msgstr "Einladung senden"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "used"
+msgstr "belegt"
+
+msgid "Invitation"
+msgstr "Einladung"
+
+msgid "Sent"
+msgstr "Gesendet"
+
+msgid "Not sent"
+msgstr "Nicht gesendet"
+
+msgid "No guests registered yet."
+msgstr "Noch keine Gaeste registriert."
+
+msgid "Edit DJ"
+msgstr "DJ bearbeiten"
+
+msgid "Add DJ"
+msgstr "DJ hinzufuegen"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Send invitations to all DJs who have not been invited yet?"
+msgstr "Einladungen an alle DJs senden, die noch nicht eingeladen wurden?"
+
+msgid "Send all invitations"
+msgstr "Alle Einladungen senden"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Half-Price"
+msgstr "Half-Price"
+
+msgid "No DJs have been added yet."
+msgstr "Es wurden noch keine DJs hinzugefuegt."
+
+msgid "Registration"
+msgstr "Registrierung"
+
+msgid "Guest Registration"
+msgstr "Gast-Registrierung"
+
+msgid "Guest list of"
+msgstr "Gaesteliste von"
+
+#, python-format
+msgid ""
+"Ticket price: %(price)s EUR. You will be redirected to checkout after "
+"registration."
+msgstr ""
+"Ticketpreis: %(price)s EUR. Du wirst nach der Registrierung zum Checkout "
+"weitergeleitet."
+
+msgid ""
+"This is a free ticket. You will receive your ticket by e-mail after "
+"registration."
+msgstr ""
+"Dies ist ein Gratis-Ticket. Du erhaeltst dein Ticket nach der "
+"Registrierung per E-Mail."
+
+msgid "Register"
+msgstr "Registrieren"
+
+msgid "Register & proceed to checkout"
+msgstr "Registrieren & zum Checkout"
+
+#, python-format
+msgid "%(used)s/%(total)s spots taken · %(free)s free"
+msgstr "%(used)s/%(total)s Plaetze belegt · %(free)s frei"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Paid"
+msgstr "Bezahlt"
+
+msgid "Add guest"
+msgstr "Gast hinzufuegen"
+
+msgid "They will receive an invitation by e-mail."
+msgstr "Der Gast erhaelt eine Einladung per E-Mail."
+
+msgid "Add"
+msgstr "Hinzufuegen"
+
+msgid "Register as guest"
+msgstr "Als Gast registrieren"
+
+msgid "All spots are taken."
+msgstr "Alle Plaetze sind belegt."
+
+msgid "Guest list full"
+msgstr "Gaesteliste voll"
+
+#, python-format
+msgid "All spots on the guest list of %(dj)s are taken."
+msgstr "Alle Plaetze auf der Gaesteliste von %(dj)s sind belegt."
+
+msgid "Registration successful"
+msgstr "Registrierung erfolgreich"
+
+#, python-format
+msgid "%(name)s, you are on the guest list of %(dj)s."
+msgstr "%(name)s, du stehst auf der Gaesteliste von %(dj)s."
+
+#, python-format
+msgid "A confirmation with your ticket has been sent to %(email)s."
+msgstr "Eine Bestaetigung mit deinem Ticket wurde an %(email)s gesendet."
+
+msgid "Guest List Settings"
+msgstr "Gaesteliste-Einstellungen"
+
+msgid "Settings saved."
+msgstr "Einstellungen gespeichert."
+
+msgid "DJ created."
+msgstr "DJ erstellt."
+
+msgid "DJ updated."
+msgstr "DJ aktualisiert."
+
+msgid "DJ deleted."
+msgstr "DJ geloescht."
+
+#, python-brace-format
+msgid "Invitation sent to {name}."
+msgstr "Einladung an {name} gesendet."
+
+#, python-brace-format
+msgid "Invitations sent to {count} DJs."
+msgstr "Einladungen an {count} DJs gesendet."
+
+msgid "All invitations have already been sent."
+msgstr "Alle Einladungen wurden bereits gesendet."

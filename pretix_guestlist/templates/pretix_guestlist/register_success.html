@@ -1,0 +1,26 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ event.settings.locale|default:'de' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ event.name }}</title>
+    <link rel="stylesheet" href="{% static 'pretix_guestlist/css/guestlist.css' %}">
+</head>
+<body>
+<main class="gl-wrap">
+    <div class="gl-card gl-result">
+        <div class="gl-result-title">{% trans "Registration successful" %}</div>
+        <p class="gl-result-text">
+            {% blocktrans with name=guest.first_name dj=dj.name %}{{ name }}, you are on the guest list of {{ dj }}.{% endblocktrans %}
+        </p>
+        {% if guest.email %}
+        <p class="gl-result-text" style="margin-top: 8px;">
+            {% blocktrans with email=guest.email %}A confirmation with your ticket has been sent to {{ email }}.{% endblocktrans %}
+        </p>
+        {% endif %}
+        <p class="gl-result-text" style="margin-top: 24px; font-size: 13px;">{{ event.name }}</p>
+    </div>
+</main>
+</body>
+</html>

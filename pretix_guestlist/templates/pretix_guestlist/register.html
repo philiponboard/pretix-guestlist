@@ -1,0 +1,136 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ event.settings.locale|default:'de' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ dj.name }} – {{ event.name }}</title>
+    <link rel="stylesheet" href="{% static 'pretix_guestlist/css/guestlist.css' %}">
+</head>
+<body>
+<main class="gl-wrap">
+
+    {# ── Header ── #}
+    <div class="gl-card">
+        <div class="gl-page-title">{{ dj.name }}</div>
+        <div class="gl-page-sub">{{ event.name }}</div>
+        <div class="gl-quota">
+            {% blocktrans with used=dj.used_slots total=dj.quota free=dj.free_slots %}{{ used }}/{{ total }} spots taken · {{ free }} free{% endblocktrans %}
+        </div>
+    </div>
+
+    {# ── Guest table ── #}
+    <div class="gl-card">
+        <div class="gl-section-title">{% trans "Guests" %}</div>
+        {% if guests %}
+        <table class="gl-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Name" %}</th>
+                    <th>{% trans "E-Mail" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Date" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for guest in guests %}
+                <tr>
+                    <td>{{ guest.first_name }} {{ guest.last_name }}</td>
+                    <td>{{ guest.email }}</td>
+                    <td>
+                        {% if guest.status == 'invited' %}
+                            <span class="gl-status-invited">{% trans "Invited" %}</span>
+                        {% elif guest.status == 'registered' %}
+                            <span class="gl-status-registered">{% trans "Registered" %}</span>
+                        {% elif guest.status == 'paid' %}
+                            <span class="gl-status-paid">{% trans "Paid" %}</span>
+                        {% elif guest.status == 'checked_in' %}
+                            <span class="gl-status-checked_in">{% trans "Checked in" %}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ guest.registered_at|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="gl-empty">{% trans "No guests yet." %}</p>
+        {% endif %}
+    </div>
+
+    {# ── Add guest form ── #}
+    {% if dj.free_slots > 0 %}
+    <div class="gl-card">
+        <div class="gl-section-title">{% trans "Add guest" %}</div>
+        <div class="gl-help">{% trans "They will receive an invitation by e-mail." %}</div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_guest">
+            <div class="gl-form-row">
+                {% for field in add_form %}
+                <div class="gl-field {% if field.errors %}has-error{% endif %}">
+                    <input type="{{ field.field.widget.input_type|default:'text' }}"
+                           name="{{ field.html_name }}"
+                           value="{{ field.value|default:'' }}"
+                           placeholder="{{ field.label }}"
+                           class="gl-input"
+                           {% if field.field.required %}required{% endif %}>
+                    {% for error in field.errors %}
+                        <div class="gl-error-text">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="gl-btn gl-btn-secondary">{% trans "Add" %}</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <hr class="gl-divider">
+
+    {# ── Self-registration ── #}
+    {% if dj.free_slots > 0 %}
+    <div class="gl-card">
+        <div class="gl-section-title">{% trans "Register as guest" %}</div>
+
+        {% if settings and settings.registration_text %}
+            <p class="gl-help">{{ settings.registration_text }}</p>
+        {% endif %}
+
+        {% if not is_free %}
+        <div class="gl-info">
+            {% blocktrans with price=product_price %}Ticket price: {{ price }} EUR. You will be redirected to checkout after registration.{% endblocktrans %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="register">
+            {% for field in reg_form %}
+            <div class="gl-field {% if field.errors %}has-error{% endif %}">
+                <label class="gl-label" for="id_reg_{{ field.html_name }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+                <input type="{{ field.field.widget.input_type|default:'text' }}"
+                       name="{{ field.html_name }}"
+                       id="id_reg_{{ field.html_name }}"
+                       value="{{ field.value|default:'' }}"
+                       class="gl-input"
+                       {% if field.field.required %}required{% endif %}>
+                {% for error in field.errors %}
+                    <div class="gl-error-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="gl-btn gl-btn-primary gl-btn-block">
+                {% if is_free %}{% trans "Register" %}{% else %}{% trans "Register & proceed to checkout" %}{% endif %}
+            </button>
+        </form>
+    </div>
+    {% else %}
+    <div class="gl-card">
+        <p class="gl-empty">{% trans "All spots are taken." %}</p>
+    </div>
+    {% endif %}
+
+</main>
+</body>
+</html>

@@ -1,0 +1,102 @@
+{% extends "pretixcontrol/event/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ dj.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ dj.name }}</h1>
+
+<div class="btn-group pull-right">
+    <form method="post" action="{% url 'plugins:pretix_guestlist:dj.send' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-{% if dj.invitation_sent %}default{% else %}success{% endif %}"
+                onclick="return confirm('{% if dj.invitation_sent %}{% trans "Invitation was already sent. Send again?" %}{% else %}{% trans "Send invitation to this DJ?" %}{% endif %}');">
+            <i class="fa fa-envelope"></i>
+            {% if dj.invitation_sent %}{% trans "Resend invitation" %}{% else %}{% trans "Send invitation" %}{% endif %}
+        </button>
+    </form>
+    <a href="{% url 'plugins:pretix_guestlist:dj.edit' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}"
+       class="btn btn-default">
+        <i class="fa fa-pencil"></i> {% trans "Edit" %}
+    </a>
+</div>
+
+<div class="clearfix"></div>
+
+<div style="margin-top: 20px;">
+    <dl class="dl-horizontal">
+        <dt>{% trans "E-Mail" %}</dt>
+        <dd>{{ dj.email }}</dd>
+        <dt>{% trans "Half-Price Quota" %}</dt>
+        <dd>{{ dj.half_price_invited_count }}/{{ dj.half_price_quota }} {% trans "used" %}</dd>
+        <dt>{% trans "Free Quota" %}</dt>
+        <dd>{{ dj.free_invited_count }}/{{ dj.free_quota }} {% trans "used" %}</dd>
+        <dt>{% trans "Token" %}</dt>
+        <dd><code>{{ dj.token }}</code></dd>
+        <dt>{% trans "Invitation" %}</dt>
+        <dd>
+            {% if dj.invitation_sent %}
+                <span style="color: #16a34a;">{% trans "Sent" %}</span> ({{ dj.invitation_sent_at|date:"d.m.Y H:i" }})
+            {% else %}
+                <span style="color: #94a3b8;">{% trans "Not sent" %}</span>
+            {% endif %}
+        </dd>
+        {% if dj.notes %}
+        <dt>{% trans "Notes" %}</dt>
+        <dd>{{ dj.notes }}</dd>
+        {% endif %}
+    </dl>
+</div>
+
+<h2 style="margin-top: 24px;">{% trans "Guests" %}</h2>
+{% if guests %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>{% trans "E-Mail" %}</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Ticket" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Order" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for guest in guests %}
+            <tr>
+                <td>{{ guest.email }}</td>
+                <td>
+                    {% if guest.first_name or guest.last_name %}
+                        {{ guest.first_name }} {{ guest.last_name }}
+                    {% else %}
+                        <span style="color: #94a3b8;">–</span>
+                    {% endif %}
+                </td>
+                <td>{{ guest.get_ticket_type_display }}</td>
+                <td>
+                    {% if guest.status == 'invited' %}
+                        <span style="color: #94a3b8;">{% trans "Invited" %}</span>
+                    {% elif guest.status == 'registered' %}
+                        <span style="color: #16a34a;">{% trans "Registered" %}</span>
+                    {% elif guest.status == 'checked_in' %}
+                        <span style="color: #16a34a; font-weight: 600;">{% trans "Checked in" %}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if guest.order %}
+                        <a href="{% url 'control:event.order' organizer=request.event.organizer.slug event=request.event.slug code=guest.order.code %}">
+                            {{ guest.order.code }}
+                        </a>
+                    {% else %}
+                        –
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>{% trans "No guests registered yet." %}</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,112 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ event.settings.locale|default:'de' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ dj.name }} – {{ event.name }}</title>
+    <link rel="stylesheet" href="{% static 'pretix_guestlist/css/guestlist.css' %}">
+</head>
+<body>
+<main class="gl-wrap">
+
+    {# ── Header ── #}
+    <div class="gl-card">
+        <div class="gl-page-title">{{ dj.name }}</div>
+        <div class="gl-page-sub">{{ event.name }}</div>
+        <div class="gl-quota">
+            {% blocktrans with used=dj.half_price_invited_count total=dj.half_price_quota %}Half Price: {{ used }}/{{ total }} used{% endblocktrans %}
+            &middot;
+            {% blocktrans with used=dj.free_invited_count total=dj.free_quota %}Free: {{ used }}/{{ total }} used{% endblocktrans %}
+        </div>
+    </div>
+
+    {# ── Guest table ── #}
+    <div class="gl-card">
+        <div class="gl-section-title">{% trans "Guests" %}</div>
+        {% if guests %}
+        <table class="gl-table">
+            <thead>
+                <tr>
+                    <th>{% trans "E-Mail" %}</th>
+                    <th>{% trans "Ticket" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for guest in guests %}
+                <tr>
+                    <td>
+                        {% if guest.first_name or guest.last_name %}
+                            {{ guest.first_name }} {{ guest.last_name }}<br>
+                            <span class="gl-text-muted">{{ guest.email }}</span>
+                        {% else %}
+                            {{ guest.email }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if guest.ticket_type == 'full_price' %}
+                            <span class="gl-badge">{% trans "Full" %}</span>
+                        {% elif guest.ticket_type == 'half_price' %}
+                            <span class="gl-badge gl-badge-half">{% trans "Half" %}</span>
+                        {% elif guest.ticket_type == 'free' %}
+                            <span class="gl-badge gl-badge-free">{% trans "Free" %}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="gl-dots">
+                            <span class="gl-dot {% if guest.status == 'invited' or guest.status == 'registered' or guest.status == 'checked_in' %}gl-dot-filled{% endif %}"></span>
+                            <span class="gl-dot {% if guest.status == 'registered' or guest.status == 'checked_in' %}gl-dot-filled{% endif %}"></span>
+                            <span class="gl-dot {% if guest.status == 'checked_in' %}gl-dot-filled{% endif %}"></span>
+                        </span>
+                    </td>
+                    <td class="gl-td-action">
+                        {% if guest.status == 'invited' %}
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="resend">
+                            <input type="hidden" name="guest_id" value="{{ guest.pk }}">
+                            <button type="submit" class="gl-btn-link" title="{% trans 'Resend invitation' %}">{% trans "Resend" %}</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="gl-empty">{% trans "No guests yet." %}</p>
+        {% endif %}
+    </div>
+
+    {# ── Add guest form ── #}
+    <div class="gl-card">
+        <div class="gl-section-title">{% trans "Invite guest" %}</div>
+        {% if error %}
+            <div class="gl-error-box">{{ error }}</div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_guest">
+            <div class="gl-form-row">
+                <div class="gl-field gl-field-grow {% if add_form.email.errors %}has-error{% endif %}">
+                    {{ add_form.email }}
+                    {% for err in add_form.email.errors %}
+                        <div class="gl-error-text">{{ err }}</div>
+                    {% endfor %}
+                </div>
+                <div class="gl-field {% if add_form.ticket_type.errors %}has-error{% endif %}">
+                    {{ add_form.ticket_type }}
+                    {% for err in add_form.ticket_type.errors %}
+                        <div class="gl-error-text">{{ err }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="gl-btn gl-btn-primary">{% trans "Invite" %}</button>
+        </form>
+    </div>
+
+</main>
+</body>
+</html>

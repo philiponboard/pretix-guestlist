@@ -1,0 +1,39 @@
+[project]
+name = "pretix-guestlist"
+dynamic = ["version"]
+description = "Smart guest list management for DJs and artists. Assign individual guest list quotas and let guests self-register."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+keywords = ["pretix"]
+authors = [
+    {name = "Praerie Festival", email = "kontakt@koenigphilip.de"},
+]
+maintainers = [
+    {name = "Praerie Festival", email = "kontakt@koenigphilip.de"},
+]
+dependencies = [
+    "qrcode[pil]>=8.0",
+]
+
+[project.entry-points."pretix.plugin"]
+pretix_guestlist = "pretix_guestlist:PretixPluginMeta"
+
+[build-system]
+requires = [
+    "setuptools",
+]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+homepage = "https://github.com/philiponboard/pretix-guestlist"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "pretix_guestlist.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["pretix*"]
+namespaces = false

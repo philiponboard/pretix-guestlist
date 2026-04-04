@@ -1,0 +1,46 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ event.settings.locale|default:'de' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Registration" %} – {{ event.name }}</title>
+    <link rel="stylesheet" href="{% static 'pretix_guestlist/css/guestlist.css' %}">
+</head>
+<body>
+<main class="gl-wrap">
+
+    <div class="gl-card">
+        <div class="gl-page-title">{% trans "Guest Registration" %}</div>
+        <div class="gl-page-sub">{{ event.name }} – {% trans "Guest list of" %} {{ dj.name }}</div>
+
+        {% if not is_free %}
+        <div class="gl-info">
+            {% blocktrans with price=price %}Ticket price: {{ price }} EUR. You will be redirected to checkout after registration.{% endblocktrans %}
+        </div>
+        {% else %}
+        <div class="gl-info">
+            {% trans "This is a free ticket. You will receive your ticket by e-mail after registration." %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="gl-field {% if field.errors %}has-error{% endif %}">
+                <label class="gl-label" for="id_{{ field.html_name }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                    <div class="gl-error-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="gl-btn gl-btn-primary gl-btn-block">
+                {% if is_free %}{% trans "Register" %}{% else %}{% trans "Register & proceed to checkout" %}{% endif %}
+            </button>
+        </form>
+    </div>
+
+</main>
+</body>
+</html>
