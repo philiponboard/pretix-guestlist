@@ -59,6 +59,7 @@
                 <th>{% trans "Ticket" %}</th>
                 <th>{% trans "Status" %}</th>
                 <th>{% trans "Order" %}</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -89,6 +90,16 @@
                         </a>
                     {% else %}
                         –
+                    {% endif %}
+                </td>
+                <td class="text-right">
+                    {% if guest.status == 'invited' %}
+                    <form method="post" action="{% url 'plugins:pretix_guestlist:guest.resend' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk guest_pk=guest.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-xs btn-default" title="{% trans 'Resend invitation' %}">
+                            <i class="fa fa-envelope"></i> {% trans "Resend" %}
+                        </button>
+                    </form>
                     {% endif %}
                 </td>
             </tr>

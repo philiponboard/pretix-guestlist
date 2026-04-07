@@ -77,6 +77,14 @@ class DJAddGuestForm(forms.Form):
     )
 
 
+class GuestSelfAddPublicForm(forms.Form):
+    """Public form for guests to add themselves to a DJ's guest list (email only)."""
+    email = forms.EmailField(
+        label=_('E-Mail'),
+        widget=forms.EmailInput(attrs={'class': 'gl-input', 'placeholder': _('your@email.com')}),
+    )
+
+
 class GuestRegistrationForm(forms.Form):
     first_name = forms.CharField(
         max_length=255,

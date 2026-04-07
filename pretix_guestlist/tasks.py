@@ -1,5 +1,3 @@
-import base64
-import io
 import logging
 
 from django.utils.timezone import now
@@ -8,30 +6,12 @@ from django.utils.translation import gettext_lazy as _
 logger = logging.getLogger(__name__)
 
 
-def _generate_qr_code_base64(url):
-    """Generate a QR code as base64-encoded PNG string."""
-    try:
-        import qrcode
-
-        qr = qrcode.QRCode(version=1, box_size=6, border=2)
-        qr.add_data(url)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color='black', back_color='white')
-
-        buffer = io.BytesIO()
-        img.save(buffer, format='PNG')
-        return base64.b64encode(buffer.getvalue()).decode('utf-8')
-    except ImportError:
-        logger.warning('qrcode library not installed, skipping QR code generation')
-        return None
-
-
 def send_dj_invitation(dj_id):
-    """Send invitation email to a single DJ with their guest list link."""
+    """Send invitation email to a single DJ with guest list links per ticket type."""
     from django_scopes import scopes_disabled
 
     with scopes_disabled():
-        from .models import DJ, GuestListSettings
+        from .models import DJ, Guest, GuestListSettings
 
         dj = DJ.objects.select_related('event', 'event__organizer').get(pk=dj_id)
         event = dj.event
@@ -43,41 +23,50 @@ def send_dj_invitation(dj_id):
 
         from django.conf import settings as django_settings
         base_url = django_settings.SITE_URL.rstrip('/')
-        link = '{base}/{organizer}/{event}/gl/{token}/'.format(
+
+        dashboard_link = '{base}/{organizer}/{event}/gl/{token}/'.format(
             base=base_url,
             organizer=event.organizer.slug,
             event=event.slug,
             token=dj.token,
         )
 
+        # Build guest self-add links for each configured ticket type
+        guest_links = []
+        link_configs = [
+            (Guest.TICKET_FULL, settings.product_full, str(_('Full Price')), None),
+            (Guest.TICKET_HALF, settings.product_half, str(_('Half Price')), dj.half_price_quota),
+            (Guest.TICKET_FREE, settings.product_free, str(_('Free')), dj.free_quota),
+        ]
+        for ticket_type, product, label, quota in link_configs:
+            if product:
+                link = '{base}/{organizer}/{event}/gl/{token}/add/{ticket_type}/'.format(
+                    base=base_url,
+                    organizer=event.organizer.slug,
+                    event=event.slug,
+                    token=dj.token,
+                    ticket_type=ticket_type,
+                )
+                if quota is not None:
+                    guest_links.append('{label} ({quota} {spots}): {link}'.format(
+                        label=label, quota=quota, spots=str(_('spots')), link=link,
+                    ))
+                else:
+                    guest_links.append('{label}: {link}'.format(label=label, link=link))
+
+        guest_links_text = '\n'.join(guest_links)
+
         context = {
             'dj_name': dj.name,
             'quota': str(dj.half_price_quota),
-            'link': link,
+            'link': dashboard_link,
             'event_name': str(event.name),
+            'guest_links': guest_links_text,
+            'dashboard_link': dashboard_link,
         }
 
         subject = str(settings.mail_subject).format(**context)
         body = str(settings.mail_template).format(**context)
-
-        # Generate QR code for the DJ dashboard link
-        qr_base64 = _generate_qr_code_base64(link)
-        html_body = None
-        if qr_base64:
-            html_body = (
-                '<p>{body_html}</p>'
-                '<p style="margin-top:20px">'
-                '<img src="data:image/png;base64,{qr}" alt="QR Code" '
-                'style="width:180px;height:180px" />'
-                '</p>'
-                '<p style="font-size:12px;color:#666">'
-                '{qr_hint}'
-                '</p>'
-            ).format(
-                body_html=body.replace('\n', '<br>'),
-                qr=qr_base64,
-                qr_hint=str(_('Scan this QR code to open your guest list dashboard.')),
-            )
 
         sender = event.settings.get('mail_from', default='noreply@example.com')
 
@@ -86,7 +75,7 @@ def send_dj_invitation(dj_id):
             to=[dj.email],
             subject=subject,
             body=body,
-            html=html_body,
+            html=None,
             sender=sender,
             event=event,
         )

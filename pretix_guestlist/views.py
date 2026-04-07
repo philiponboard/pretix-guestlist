@@ -1,4 +1,11 @@
+import csv
+import io
+import logging
+
 from django.contrib import messages
+from django.core.validators import validate_email
+from django.db import transaction
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -7,8 +14,12 @@ from django.views.generic import CreateView, DeleteView, DetailView, ListView, U
 from pretix.control.permissions import EventPermissionRequiredMixin
 
 from .forms import DJForm, SettingsForm
-from .models import DJ, GuestListSettings
-from .tasks import send_dj_invitation
+from .models import DJ, Guest, GuestListSettings
+from .tasks import send_dj_invitation, send_guest_invitation
+
+logger = logging.getLogger(__name__)
+
+CSV_MAX_SIZE = 1024 * 1024  # 1 MB
 
 
 class GuestListSettingsView(EventPermissionRequiredMixin, UpdateView):
@@ -147,3 +158,127 @@ class SendAllInvitationsView(EventPermissionRequiredMixin, View):
             'organizer': request.event.organizer.slug,
             'event': request.event.slug,
         }))
+
+
+class ResendGuestInvitationView(EventPermissionRequiredMixin, View):
+    permission = 'can_change_event_settings'
+
+    def post(self, request, *args, **kwargs):
+        dj = get_object_or_404(DJ, pk=kwargs['pk'], event=request.event)
+        guest = get_object_or_404(Guest, pk=kwargs['guest_pk'], dj=dj, status=Guest.STATUS_INVITED)
+        send_guest_invitation(guest.pk)
+        messages.success(request, _('Invitation resent to {email}.').format(email=guest.email))
+        return redirect(reverse('plugins:pretix_guestlist:dj.detail', kwargs={
+            'organizer': request.event.organizer.slug,
+            'event': request.event.slug,
+            'pk': dj.pk,
+        }))
+
+
+class CSVTemplateDownloadView(EventPermissionRequiredMixin, View):
+    permission = 'can_change_event_settings'
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="dj_import_template.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['name', 'email', 'half_price_quota', 'free_quota'])
+        writer.writerow(['DJ Pretix', 'dj@email.com', '1', '1'])
+        return response
+
+
+class CSVUploadView(EventPermissionRequiredMixin, View):
+    permission = 'can_change_event_settings'
+
+    def post(self, request, *args, **kwargs):
+        redirect_url = reverse('plugins:pretix_guestlist:index', kwargs={
+            'organizer': request.event.organizer.slug,
+            'event': request.event.slug,
+        })
+
+        csv_file = request.FILES.get('csv_file')
+        if not csv_file:
+            messages.error(request, _('No file uploaded.'))
+            return redirect(redirect_url)
+
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, _('Please upload a CSV file.'))
+            return redirect(redirect_url)
+
+        if csv_file.size > CSV_MAX_SIZE:
+            messages.error(request, _('File too large. Maximum size is 1 MB.'))
+            return redirect(redirect_url)
+
+        try:
+            decoded = csv_file.read().decode('utf-8-sig')
+
+            # Auto-detect delimiter (comma or semicolon)
+            first_line = decoded.split('\n')[0]
+            delimiter = ';' if ';' in first_line and ',' not in first_line else ','
+
+            reader = csv.DictReader(io.StringIO(decoded), delimiter=delimiter)
+            # Strip whitespace from header names
+            reader.fieldnames = [f.strip() for f in (reader.fieldnames or [])]
+
+            required_fields = {'name', 'email'}
+            if not required_fields.issubset(set(reader.fieldnames)):
+                messages.error(request, _('CSV must contain columns: name, email. Found: {cols}').format(
+                    cols=', '.join(reader.fieldnames)))
+                return redirect(redirect_url)
+
+            created = 0
+            skipped = 0
+            errors = []
+
+            with transaction.atomic():
+                for i, row in enumerate(reader, start=2):
+                    name = row.get('name', '').strip()
+                    email = row.get('email', '').strip()
+
+                    if not name or not email:
+                        errors.append(_('Row {row}: name and email are required.').format(row=i))
+                        continue
+
+                    # Validate email format
+                    try:
+                        validate_email(email)
+                    except Exception:
+                        errors.append(_('Row {row}: invalid email address.').format(row=i))
+                        continue
+
+                    # Skip duplicates (same email for this event)
+                    if DJ.objects.filter(event=request.event, email__iexact=email).exists():
+                        skipped += 1
+                        continue
+
+                    try:
+                        half_price_quota = int(row.get('half_price_quota', '5').strip() or '5')
+                    except ValueError:
+                        half_price_quota = 5
+
+                    try:
+                        free_quota = int(row.get('free_quota', '10').strip() or '10')
+                    except ValueError:
+                        free_quota = 10
+
+                    DJ.objects.create(
+                        event=request.event,
+                        name=name,
+                        email=email,
+                        half_price_quota=half_price_quota,
+                        free_quota=free_quota,
+                    )
+                    created += 1
+
+            if created:
+                messages.success(request, _('Successfully imported {count} DJs.').format(count=created))
+            if skipped:
+                messages.info(request, _('Skipped {count} duplicate emails.').format(count=skipped))
+            if errors:
+                messages.warning(request, ' | '.join(str(e) for e in errors))
+
+        except Exception as e:
+            logger.warning('CSV import failed: %s', e)
+            messages.error(request, _('Error reading CSV file.'))
+
+        return redirect(redirect_url)

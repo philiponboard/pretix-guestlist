@@ -53,12 +53,14 @@ class GuestListSettings(models.Model):
     mail_template = models.TextField(
         default=_(
             'Hello {dj_name},\n\n'
-            'you have {quota} half-price guest list spots for {event_name}.\n\n'
-            'Share this link with your guests:\n{link}\n\n'
-            'Your guests can register themselves and will receive their ticket via e-mail.\n\n'
+            'here are your guest list links for {event_name}.\n'
+            'Share the appropriate link with your guests — they can sign up themselves.\n\n'
+            '{guest_links}\n\n'
+            'Your dashboard (manage your guest list):\n{dashboard_link}\n\n'
             'Best regards,\nThe {event_name} Team'
         ),
         verbose_name=_('E-Mail template'),
+        help_text=_('Available placeholders: {dj_name}, {event_name}, {guest_links}, {dashboard_link}, {quota}, {link}'),
     )
     registration_text = models.TextField(
         blank=True,

@@ -1,7 +1,7 @@
 from django.urls import re_path
 
 from . import views
-from .registration_views import DJDashboardView, GuestRegistrationView
+from .registration_views import DJDashboardView, GuestRegistrationView, GuestSelfAddView
 
 # Control Panel URLs – loaded via urlpatterns (full path with /control/event/...)
 urlpatterns = [
@@ -21,6 +21,12 @@ urlpatterns = [
             views.SendInvitationView.as_view(), name='dj.send'),
     re_path(r'^control/event/(?P<organizer>[^/]+)/(?P<event>[^/]+)/guestlist/send-all/$',
             views.SendAllInvitationsView.as_view(), name='send_all'),
+    re_path(r'^control/event/(?P<organizer>[^/]+)/(?P<event>[^/]+)/guestlist/(?P<pk>[0-9]+)/guest/(?P<guest_pk>[0-9]+)/resend/$',
+            views.ResendGuestInvitationView.as_view(), name='guest.resend'),
+    re_path(r'^control/event/(?P<organizer>[^/]+)/(?P<event>[^/]+)/guestlist/csv-template/$',
+            views.CSVTemplateDownloadView.as_view(), name='csv_template'),
+    re_path(r'^control/event/(?P<organizer>[^/]+)/(?P<event>[^/]+)/guestlist/csv-upload/$',
+            views.CSVUploadView.as_view(), name='csv_upload'),
 ]
 
 # Public (Presale) URLs – loaded via event_patterns
@@ -29,4 +35,6 @@ event_patterns = [
             DJDashboardView.as_view(), name='dj_dashboard'),
     re_path(r'^gl/(?P<dj_token>[a-zA-Z0-9]+)/r/(?P<guest_token>[a-zA-Z0-9]+)/$',
             GuestRegistrationView.as_view(), name='guest_register'),
+    re_path(r'^gl/(?P<token>[a-zA-Z0-9]+)/add/(?P<ticket_type>full_price|half_price|free)/$',
+            GuestSelfAddView.as_view(), name='guest_self_add'),
 ]

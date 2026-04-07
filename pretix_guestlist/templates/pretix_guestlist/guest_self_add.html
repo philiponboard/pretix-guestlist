@@ -1,0 +1,44 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ event.settings.locale|default:'de' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ event.name }} – {% trans "Guest List" %}</title>
+    <link rel="stylesheet" href="{% static 'pretix_guestlist/css/guestlist.css' %}">
+</head>
+<body>
+<main class="gl-wrap">
+
+    <div class="gl-card">
+        <div class="gl-page-title">{{ event.name }}</div>
+        <div class="gl-page-sub">{% trans "Guest list of" %} {{ dj.name }} &middot; {{ ticket_type_display }}</div>
+
+        {% if quota_full %}
+            <div class="gl-error-box">
+                {% trans "Sorry, no more spots available for this ticket type." %}
+            </div>
+        {% else %}
+            {% if error %}
+                <div class="gl-error-box">{{ error }}</div>
+            {% endif %}
+
+            <p class="gl-help">{% trans "Enter your e-mail address to sign up for the guest list. You will receive a registration link by e-mail." %}</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="gl-field {% if form.email.errors %}has-error{% endif %}">
+                    <label class="gl-label" for="id_email">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {% for err in form.email.errors %}
+                        <div class="gl-error-text">{{ err }}</div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="gl-btn gl-btn-primary gl-btn-block">{% trans "Sign up" %}</button>
+            </form>
+        {% endif %}
+    </div>
+
+</main>
+</body>
+</html>

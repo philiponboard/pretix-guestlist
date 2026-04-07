@@ -4,6 +4,17 @@
 {% block title %}{% trans "Guest List" %}{% endblock %}
 
 {% block content %}
+<style>
+.gl-action-group {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+}
+.gl-action-group form { margin: 0; }
+@media (max-width: 767px) {
+    .gl-action-group { flex-direction: column; align-items: flex-end; }
+}
+</style>
 <h1>{% trans "Guest List" %}</h1>
 
 <div class="btn-group pull-right">
@@ -24,6 +35,25 @@
 </div>
 
 <div class="clearfix"></div>
+
+<div style="margin-top: 16px; padding: 16px; background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 6px;">
+    <strong>{% trans "Bulk Import" %}</strong>
+    <p style="margin: 8px 0; font-size: 13px; color: #666;">
+        {% trans "Upload a CSV file to import multiple DJs at once." %}
+        <a href="{% url 'plugins:pretix_guestlist:csv_template' organizer=request.event.organizer.slug event=request.event.slug %}">
+            {% trans "Download CSV template" %}
+        </a>
+    </p>
+    <form method="post" enctype="multipart/form-data"
+          action="{% url 'plugins:pretix_guestlist:csv_upload' organizer=request.event.organizer.slug event=request.event.slug %}"
+          style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        {% csrf_token %}
+        <input type="file" name="csv_file" accept=".csv" class="form-control" style="max-width: 300px;">
+        <button type="submit" class="btn btn-default">
+            <i class="fa fa-upload"></i> {% trans "Import" %}
+        </button>
+    </form>
+</div>
 
 {% if djs %}
 <p style="margin-top: 16px; color: #666; font-size: 13px;">
@@ -62,14 +92,22 @@
                     {% endif %}
                 </td>
                 <td class="text-right">
-                    <a href="{% url 'plugins:pretix_guestlist:dj.edit' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}"
-                       class="btn btn-xs btn-default" title="{% trans 'Edit' %}">
-                        <i class="fa fa-pencil"></i>
-                    </a>
-                    <a href="{% url 'plugins:pretix_guestlist:dj.delete' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}"
-                       class="btn btn-xs btn-danger" title="{% trans 'Delete' %}">
-                        <i class="fa fa-trash"></i>
-                    </a>
+                    <div class="gl-action-group">
+                        <form method="post" action="{% url 'plugins:pretix_guestlist:dj.send' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-xs btn-default" title="{% if dj.invitation_sent %}{% trans 'Resend invitation' %}{% else %}{% trans 'Send invitation' %}{% endif %}">
+                                <i class="fa fa-envelope"></i>
+                            </button>
+                        </form>
+                        <a href="{% url 'plugins:pretix_guestlist:dj.edit' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}"
+                           class="btn btn-xs btn-default" title="{% trans 'Edit' %}">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                        <a href="{% url 'plugins:pretix_guestlist:dj.delete' organizer=request.event.organizer.slug event=request.event.slug pk=dj.pk %}"
+                           class="btn btn-xs btn-danger" title="{% trans 'Delete' %}">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </div>
                 </td>
             </tr>
             {% endfor %}

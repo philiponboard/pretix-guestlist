@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from pretix.base.signals import order_placed
 
-from .forms import DJAddGuestForm, GuestRegistrationForm
+from .forms import DJAddGuestForm, GuestRegistrationForm, GuestSelfAddPublicForm
 from .models import DJ, Guest, GuestListSettings
 from .tasks import send_guest_invitation
 
@@ -302,6 +302,97 @@ class GuestRegistrationView(View):
             )
         except Exception as e:
             logger.warning('Failed to send confirmation mail for order %s: %s', order.code, e)
+
+
+class GuestSelfAddView(View):
+    """Public page where guests add themselves to a DJ's list for a specific ticket type."""
+
+    def dispatch(self, request, *args, **kwargs):
+        self.dj = get_object_or_404(
+            DJ.objects.select_related('event', 'event__organizer'),
+            token=kwargs['token'],
+        )
+        self.event = self.dj.event
+        self.ticket_type = kwargs['ticket_type']  # validated by URL regex
+        self.settings = GuestListSettings.objects.filter(event=self.event).first()
+        return super().dispatch(request, *args, **kwargs)
+
+    def _quota_full(self):
+        if self.ticket_type == Guest.TICKET_HALF:
+            return self.dj.half_price_invited_count >= self.dj.half_price_quota
+        elif self.ticket_type == Guest.TICKET_FREE:
+            return self.dj.free_invited_count >= self.dj.free_quota
+        return False  # full_price is unlimited
+
+    def _get_context(self, form=None, error=None):
+        return {
+            'dj': self.dj,
+            'event': self.event,
+            'ticket_type': self.ticket_type,
+            'ticket_type_display': dict(Guest.TICKET_CHOICES).get(self.ticket_type, ''),
+            'form': form or GuestSelfAddPublicForm(),
+            'error': error,
+            'quota_full': self._quota_full(),
+        }
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'pretix_guestlist/guest_self_add.html', self._get_context())
+
+    def post(self, request, *args, **kwargs):
+        if self._quota_full():
+            return render(request, 'pretix_guestlist/guest_self_add.html',
+                          self._get_context(error=_('Sorry, no more spots available for this ticket type.')))
+
+        form = GuestSelfAddPublicForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'pretix_guestlist/guest_self_add.html',
+                          self._get_context(form=form))
+
+        email = form.cleaned_data['email']
+
+        # Prevent duplicate sign-ups with the same email for this DJ
+        if Guest.objects.filter(dj=self.dj, email__iexact=email).exists():
+            return render(request, 'pretix_guestlist/guest_self_add.html',
+                          self._get_context(form=form, error=_('This e-mail address is already on the guest list.')))
+
+        if self.ticket_type in (Guest.TICKET_HALF, Guest.TICKET_FREE):
+            try:
+                guest = self._create_quota_guest(email)
+            except QuotaExhausted:
+                return render(request, 'pretix_guestlist/guest_self_add.html',
+                              self._get_context(form=form, error=_('Sorry, no more spots available for this ticket type.')))
+        else:
+            guest = Guest.objects.create(
+                dj=self.dj,
+                email=email,
+                ticket_type=self.ticket_type,
+                status=Guest.STATUS_INVITED,
+            )
+
+        send_guest_invitation(guest.pk)
+        return render(request, 'pretix_guestlist/guest_self_add_success.html', {
+            'event': self.event,
+            'dj': self.dj,
+            'email': email,
+        })
+
+    @transaction.atomic
+    def _create_quota_guest(self, email):
+        dj = DJ.objects.select_for_update().get(pk=self.dj.pk)
+
+        if self.ticket_type == Guest.TICKET_HALF:
+            if dj.half_price_invited_count >= dj.half_price_quota:
+                raise QuotaExhausted()
+        elif self.ticket_type == Guest.TICKET_FREE:
+            if dj.free_invited_count >= dj.free_quota:
+                raise QuotaExhausted()
+
+        return Guest.objects.create(
+            dj=dj,
+            email=email,
+            ticket_type=self.ticket_type,
+            status=Guest.STATUS_INVITED,
+        )
 
 
 class QuotaExhausted(Exception):
