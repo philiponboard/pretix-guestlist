@@ -1,44 +1,33 @@
 # pretix-guestlist
 
-A [pretix](https://pretix.eu) plugin for managing DJ and artist guest lists at festivals and events. Assign individual quotas, let guests self-register via personal links, and issue real pretix tickets — all without manual order creation.
+A [pretix](https://pretix.eu) plugin that handles DJ and artist guest lists. DJs get personal links they can share with their guests. Guests sign up themselves, and pretix issues the tickets. No manual order creation.
 
-## What it does
+## The problem
 
-Managing guest lists for DJs and artists is tedious: tracking who gets how many free or discounted tickets, collecting names, creating orders manually, and chasing people who haven't registered. This plugin automates the entire process inside pretix.
+If you run a festival, you probably deal with this: every DJ gets a handful of free or discounted tickets for friends. Someone has to track who gets how many, collect names, create orders by hand, and chase people who haven't registered. It gets messy fast.
 
-**For event organizers:**
-- Create and manage DJ/artist accounts with individual ticket quotas
-- Bulk-import DJs via CSV upload instead of adding them one by one
+This plugin moves the whole process into pretix. You add your DJs, set their quotas, and send them an email. They forward links to their guests, guests register themselves, pretix handles the rest.
+
+## What organizers get
+
+- Add DJs one by one or bulk-import via CSV
+- Set per-DJ quotas for half-price and free tickets (full price is unlimited)
 - Send invitation emails to all DJs at once
-- Track guest registration status (invited / registered / checked in)
-- Export the complete guest list as CSV
-- Automatic reminder emails to unregistered guests (7 days and 2 days before the event)
+- Track guest status: invited, registered, checked in
+- Export the full guest list as CSV
+- Automatic reminder emails 7 and 2 days before the event
 
-**For DJs and artists:**
-- Receive shareable links per ticket type (Full Price, Half Price, Free) to forward to guests
-- Personal dashboard to view guest status and resend invitations
-- No pretix account needed — everything works via token-based links
+## What DJs get
 
-**For guests:**
-- Simple self-registration: enter email via the link the DJ shared, then complete registration via a personal link
-- Free tickets (0 EUR) are issued instantly with a ticket PDF by email
-- Paid tickets redirect to the standard pretix checkout via a one-time voucher
+- An email with up to 3 shareable links (one per ticket type: full price, half price, free)
+- A personal dashboard to see their guests and resend invitations
+- No pretix account needed -- token-based links, no login
 
-## Features
+## What guests see
 
-- **3 ticket types**: Full Price, Half Price, and Free — each mapped to a pretix product
-- **Per-DJ quotas**: Configurable limits for half-price and free tickets (full price is unlimited)
-- **Shareable guest links**: DJs get up to 3 links (one per ticket type) to share with their guests
-- **Guest self-sign-up**: Guests enter their email via the shared link and receive a registration email
-- **DJ dashboard**: Personal page where DJs see their guest list and can resend invitations
-- **Guest self-registration**: Guests complete registration (name, email) via their personal link
-- **Automatic ticketing**: Free tickets issued instantly; paid tickets redirect to pretix checkout via one-time voucher
-- **Hidden products**: Guest list products are automatically hidden from the public shop
-- **CSV bulk import**: Upload a CSV file to import multiple DJs at once (with template download)
-- **CSV export**: Export the full guest list from the pretix admin
-- **Duplicate protection**: Same email cannot sign up twice per DJ
-- **Reminder emails**: Automatic reminders 7 days and 2 days before the event
-- **Translations**: German and English
+- They open the link the DJ shared and enter their email
+- They get a registration link by email, fill in their name
+- Free tickets (0 EUR) arrive instantly as PDF; paid tickets go through normal pretix checkout with a one-time voucher
 
 ## Requirements
 
@@ -47,52 +36,72 @@ Managing guest lists for DJs and artists is tedious: tracking who gets how many 
 
 ## Installation
 
+The plugin needs to be installed in the same Python environment where pretix runs. That depends on your setup:
+
+**If pretix runs in Docker (most common):**
+
 ```bash
+# Open a shell inside your pretix container
+docker exec -it <your-pretix-container> bash
+
+# Install the plugin
 pip install git+https://github.com/philiponboard/pretix-guestlist.git
+
+# Run database migrations
+python -m pretix migrate
+
+# Then restart the container so pretix picks up the new plugin
 ```
 
-After installation, restart pretix and run migrations:
+You need to do this for every container that runs pretix code -- typically the web server and the Celery worker. If you use docker-compose, that usually means the `pretix` and `celery` services.
+
+Note: the plugin will be lost when you rebuild the container image. To make it permanent, add the `pip install` line to your Dockerfile.
+
+**If pretix runs directly on a server (without Docker):**
 
 ```bash
+# Activate the same virtualenv pretix uses, then:
+pip install git+https://github.com/philiponboard/pretix-guestlist.git
 python -m pretix migrate
+
+# Restart pretix (e.g. systemctl restart pretix-web pretix-worker)
 ```
 
-Then enable the plugin in your event under **Settings > Plugins > Guest List**.
+**After installation**, go to your event in the pretix admin panel: **Settings > Plugins** and enable "Guest List".
 
-## Configuration
+## Setup
 
-1. **Create 3 products** in your event for the guest list ticket types (e.g. "GL Full Price", "GL Half Price", "GL Free"). Set the price to 0 EUR for free tickets.
-2. Go to **Guest List > Settings** and assign the 3 products to their ticket types.
-3. Enable "Hide products from shop" so they are only accessible via guest list links.
-4. Add DJs manually or use **CSV bulk import** (download the template first).
-5. Click **Send all invitations** to email every DJ their personal links.
+1. Create 3 products in your event for the guest list (e.g. "GL Full Price", "GL Half Price", "GL Free"). Set the price for free tickets to 0 EUR.
+2. In **Guest List > Settings**, assign each product to its ticket type.
+3. Enable "Hide products from shop" so these products only show up through guest list links, not in your public shop.
+4. Add DJs manually or use the CSV bulk import (there's a template you can download).
+5. Hit "Send all invitations" and you're set.
 
-## How it works
+## How the flow works
 
-1. **Admin** creates products, configures the plugin, and adds DJs with individual quotas
-2. **DJ** receives an invitation email containing:
-   - Up to 3 shareable links (one per configured ticket type) to forward to guests
-   - A personal dashboard link to manage their guest list
-3. **Guest** opens the link the DJ shared, enters their email, and receives a registration email
-4. **Guest** opens the registration link and fills in their name:
-   - **Free ticket** (0 EUR): Order created immediately, ticket sent by email
-   - **Paid ticket**: Redirected to pretix checkout with a one-time voucher
-5. **Admin** tracks all guests via the pretix control panel and can export the list as CSV
+1. You add DJs and set their quotas
+2. Each DJ gets an email with up to 3 links (one per ticket type) plus a dashboard link
+3. The DJ forwards the appropriate link to each guest
+4. The guest opens the link, enters their email, and gets a personal registration link
+5. The guest fills in their name:
+   - Free ticket? Order is created on the spot, ticket PDF sent by email
+   - Paid ticket? Guest is redirected to the pretix checkout with a one-time voucher that unlocks the hidden product
+6. You can track everything in the pretix admin and export it as CSV
 
 ## Development
 
-Clone the repository and use the Docker dev setup:
+The repo includes a Docker-based dev setup:
 
 ```bash
 cd docker-dev-setup
-make up              # Start containers
-make restart         # Restart after code changes
-make makemigrations  # Create new migrations
-make migrate         # Apply migrations
-make shell           # Bash in container
+make up              # start containers
+make restart         # restart after code changes
+make makemigrations  # create new migrations
+make migrate         # apply migrations
+make shell           # bash inside the container
 ```
 
-Run tests:
+Tests:
 
 ```bash
 docker compose exec pretix python -m pytest /plugin/pretix_guestlist/tests/ -v
@@ -100,4 +109,4 @@ docker compose exec pretix python -m pytest /plugin/pretix_guestlist/tests/ -v
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE) for details.
+Apache 2.0 -- see [LICENSE](LICENSE).
