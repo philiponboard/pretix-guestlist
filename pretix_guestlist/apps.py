@@ -10,10 +10,10 @@ class PluginApp(AppConfig):
 
     class PretixPluginMeta:
         name = _("Guest List")
-        author = "Praerie Festival"
+        author = "Philip König"
         category = "FEATURE"
         description = _(
-            "Smart guest list management for DJs and artists. "
+            "Easy guest list management for DJs and artists. "
             "Assign individual guest list quotas and let guests self-register."
         )
         visible = True
